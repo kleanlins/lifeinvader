@@ -1,0 +1,112 @@
+	<!DOCTYPE html>
+	<html>
+	<head>
+		<title>Lifeinvader</title>
+		<link rel="stylesheet" type="text/css" href="/static/bootstrap.css">
+		<link rel="stylesheet" type="text/css" href="/static/lifeInvaderTimeline.css">
+		<link href="https://fonts.googleapis.com/css?family=Do+Hyeon" rel="stylesheet">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+	</head>
+	<body>
+		<!-- navbar -->
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="{% url 'timeline' %}">Lifeinvader</a>
+				</div>
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						<li><a href="{% url 'show_profile' %}">My profile</a></li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li><a href="./lifeInvaderLogin.html">Logout</a></li>
+					</ul>
+				</div><!-- /.navbar-collapse -->
+			</div><!-- /.container-fluid -->
+		</nav>
+		<!-- colunas da timeline! -->
+
+			<div class="col-lg-3">
+				<div class="leftBox">
+					<h4><span><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" class="img-thumbnail thumb"></span>  {{name}}</h4>
+					<hr>
+					<button class="btn btn-large peopleButton" data-toggle="collapse" data-target="#people">Friends</button>
+					<div id="people" class="collapse">
+						{% for id, name in friends%}
+						<div class="people">
+							<p><span><a href="{% url 'visit_profile' id %}" ><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" id='{{ id }}' class="img-thumbnail thumb"></a></span> {{name}}</p>
+						</div>
+						{% endfor %}
+					</div>
+					<hr><button class="btn btn-large peopleButton" data-toggle="collapse" data-target="#groups">Groups</button>
+					<div id="groups" class="collapse">
+						{% for id, name, rl in groups %}
+						<div class="people">
+							<p><span><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" id='{{ id }}' class="img-thumbnail thumb"></span> {{name}}</p>
+						</div>
+						{% endfor %}
+						<div class="people">
+							<a href="./lifeInvaderProfileGroups.html"><button class="btn btn-large peopleButton">Manage Groups</button></a>
+						</div>
+					</div>
+					<hr>
+				</div>
+			</div>
+			<div class="col-lg-6">
+				<div class="row">
+					<div class="box">
+						<form>
+							<span><input type="file" name="pic" accept="image/*" class="imgSender"></span>
+							<textarea class="form-control" rows="3" placeholder="What are you thinking? Share with us!"></textarea>
+							<button class="btn btn-large submitButton" type="submit">Submit</button>
+						</form>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col"> <!-- Start posts -->
+						<div class="row"> <!-- start post 1 -->
+							{% for user, id, content in posts %}
+							<div class="col">
+								<div class="centerBox">
+									<div>
+										<p><span><a href="{% url 'visit_profile' id %}" ><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" class="img-thumbnail thumb"></a></span>  {{ user }}</p>
+										<h5>{{content}}</h5>
+									</div>
+								</div>
+							</div> <!-- till here -->
+							{% endfor %}
+						</div> <!-- end post 1 -->
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-3">
+				<div class="box">
+					<h3>Lifeinvader Community</h3>
+					<hr>
+					<button class="btn btn-large peopleButton" data-toggle="collapse" data-target="#people2">People</button>
+					<div id="people2" class="collapse">
+						{% for name, id in all_users %}
+						<div class="people">
+							<p><span><a href="{% url 'visit_profile' id %}" ><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" class="img-thumbnail thumb"></a></span> {{name}}</p>
+						</div>
+						{% endfor %}
+					</div>
+					<hr>
+					<button class="btn btn-large peopleButton" data-toggle="collapse" data-target="#groups2">Groups</button>
+					<div id="groups2" class="collapse">
+						{% for name in all_groups %}
+						<div class="people">
+							<p><span><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" class="img-thumbnail thumb"></span> {{name}}</p>
+						</div>
+						{% endfor %}
+					</div>
+					<hr>
+				</div>
+			</div>
+
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script type="text/javascript" src="/static/bootstrap.js"></script>
+	</body>
+	</html>
