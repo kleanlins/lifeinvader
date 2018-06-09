@@ -88,7 +88,7 @@ def show_timeline(request):
     'groups':groups,
     'all_users':all_users,
     'all_groups':all_groups})
-
+    #ok
 
 def visit_profile(request, id):
 
