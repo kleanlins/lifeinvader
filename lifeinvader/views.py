@@ -13,14 +13,22 @@ def login(request):
 def signup(request):
     return render(request, 'lifeInvaderSignup.html')
 
+
 @csrf_exempt
 def success(request):
     print("Success was called.")
     name = request.POST.get('uname', '')
     email = request.POST.get('uemail', '')
     password = request.POST.get('upassword', '')
-    print(name, email, password)
+    pic = request.POST.get('pic','')
 
+    user_info = databasequeries.register(name, email, password, pic)
+    if user_info == 'deny':
+        return render(request, 'lifeInvaderSignup.html',
+            {'msg': "That e-mail is already in use. Choose another one."}
+        )
+
+    request.session['user_id'] = user_info
 
     return render(request, 'lifeInvaderSucess.html',
         {'name': name}
@@ -55,24 +63,38 @@ def show_profile(request):
     id = request.session['user_id']
     print("Logged user with id: ", id)
 
-    posts = databasequeries.get_posts(id, id)
-    name, age, email = databasequeries.get_info_from_id(id)
+    posts = databasequeries.get_posts(id, "U")
+    name, age, email, pic = databasequeries.get_info_from_id(id)
     friends = databasequeries.get_friends(id)
     groups = databasequeries.get_groups(id)
+
+    who = 'self'
 
     return render(request, 'lifeInvaderProfile.html',
     {'name':name,
     'age':age,
     'email':email,
+    'pic':pic,
     'posts':posts,
     'friends':friends,
-    'groups':groups})
+    'groups':groups,
+    'who':who})
 
+@csrf_exempt
 def show_timeline(request):
     print("Timelining with id ", request.session['user_id'])
     id = request.session['user_id']
 
-    name, age, email = databasequeries.get_info_from_id(id)
+    try:
+        post_text = request.POST.get('post_text', '')
+        post_img = request.POST.get('pic', '')
+        if(post_text != ''):
+            databasequeries.post(id, id, "U", post_text, post_img);
+
+    except Exception as e:
+        print(e)
+
+    name, age, email, pic = databasequeries.get_info_from_id(id)
     friends = databasequeries.get_friends(id)
     groups = databasequeries.get_groups(id)
     posts = databasequeries.get_timeline_posts(id)
@@ -83,25 +105,51 @@ def show_timeline(request):
     {'name':name,
     'age':age,
     'email':email,
+    'pic':pic,
     'posts':posts,
     'friends':friends,
     'groups':groups,
     'all_users':all_users,
     'all_groups':all_groups})
-    #ok
+
 
 def visit_profile(request, id):
 
+    if id == request.session['user_id']:
+        return show_profile(request)
 
-    posts = databasequeries.get_posts(id, id)
-    name, age, email = databasequeries.get_info_from_id(id)
-    friends = databasequeries.get_friends(id)
+    else:
+        posts = databasequeries.get_posts(id, "U")
+        name, age, email, pic = databasequeries.get_info_from_id(id)
+        friends = databasequeries.get_friends(id)
+        groups = databasequeries.get_groups(id)
+        status = databasequeries.is_friend(request.session['user_id'], id)
+        print(request.session['user_id'], id, "are", status)
+
+        who = ''
+
+        return render(request, 'lifeInvaderProfile.html',
+        {'name':name,
+        'age':age,
+        'email':email,
+        'pic':pic,
+        'posts':posts,
+        'friends':friends,
+        'groups':groups,
+        'who':who,
+        'status':status})
+
+
+def group_manager(request):
+
+    id = request.session['user_id']
     groups = databasequeries.get_groups(id)
 
-    return render(request, 'lifeInvaderProfile.html',
-    {'name':name,
-    'age':age,
-    'email':email,
-    'posts':posts,
-    'friends':friends,
-    'groups':groups})
+
+
+
+    return render(request, 'lifeInvaderProfileGroups.html')
+
+
+def visit_group(request, id):
+    pass

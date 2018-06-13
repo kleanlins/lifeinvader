@@ -31,22 +31,24 @@
 					<hr>
 					<button class="btn btn-large peopleButton" data-toggle="collapse" data-target="#people">Friends</button>
 					<div id="people" class="collapse">
-						{% for id, name in friends%}
+						{% for id, name, pic in friends %}
 						<div class="people">
-							<p><span><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" id='{{ id }}' class="img-thumbnail thumb"></span> {{name}}</p>
+							<p><span><a href="{% url 'visit_profile' id %}"><img src="/static/{{pic}}" class="img-thumbnail thumb"></a></span> {{name}}</p>
 						</div>
 						{% endfor %}
 					</div>
 					<hr>
 					<button class="btn btn-large peopleButton" data-toggle="collapse" data-target="#groups">Groups</button>
 					<div id="groups" class="collapse">
-						{% for id, name, rl in groups %}
+						{% for id, name, pic in groups %}
 						<div class="people">
-							<p><span><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" id='{{ id }}' class="img-thumbnail thumb"></span> {{name}}</p>
+							<p><span><a href="{% url 'visit_group' id %}" ><img src="/static/{{pic}}" class="img-thumbnail thumb"></a></span> {{name}}</p>
 						</div>
 						{% endfor %}
 						<div class="people">
-							<a href="./lifeInvaderProfileGroups.html"><button class="btn btn-large peopleButton">Manage Groups</button></a>
+							{% if who == 'self' %}
+							<a href="{% url 'group_manager' %}"><button class="btn btn-large peopleButton">Manage Groups</button></a>
+							{% endif %}
 						</div>
 					</div>
 					<hr>
@@ -55,24 +57,34 @@
 			<div class="col-lg-6">
 				<div class="row">
 					<div class="box">
-						<p class="info"><span class="img"><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" class="img-thumbnail thumb"></span>{{name}}</p>
-						<span><input type="file" name="pic" accept="image/*" class="imgSender"></span>
+						<p class="info"><span class="img"><img src="/static/{{pic}}" class="img-thumbnail thumb"></span>{{name}}</p>
 						<hr>
 						<p class="info">Nome: {{name}}</p>
 						<p class="info">Endereço de email: {{email}}</p>
 						<hr>
-						<a href="./lifeInvaderProfileEditor.html"><button class="btn btn-large peopleButton">Edit informations</button></a>
+						{% if who == 'self' %}
+							<a href="./lifeInvaderProfileEditor.html"><button class="btn btn-large peopleButton">Edit informations</button></a>
+						{% else %}
+							{% if status == 'friends' %}
+								<a href="./lifeInvaderProfileEditor.html"><button class="btn btn-large peopleButton">Remover amigo</button></a>
+							{% else %}
+								<a href="./lifeInvaderProfileEditor.html"><button class="btn btn-large peopleButton">Adicionar amigo</button></a>
+							{% endif %}
+							<hr>
+							<a href="./lifeInvaderProfileEditor.html"><button class="btn btn-large peopleButton">Bloquear usuário</button></a>
+						{% endif %}
+
 					</div>
 				</div>
 
 				<div class="row">
 					<div class="col"> <!-- Start posts -->
 						<div class="row"> <!-- start post 1 -->
-							{% for id, id_loc, id_owner, t_ow, content, img in posts %}
+							{% for id, name, pic, content, image in posts %}
 							<div class="col">
 								<div class="centerBox">
 									<div>
-										<p><span><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" class="img-thumbnail thumb"></span>  {{name}}:</p>
+										<p><span><a href="{% url 'visit_profile' id %}" ><img src="/static/{{pic}}" class="img-thumbnail thumb"></a></span>  {{name}}:</p>
 										<h5>{{ content }}</h5>
 									</div>
 								</div>
@@ -83,7 +95,17 @@
 				</div>
 			</div>
 			<div class="col-lg-3">
-
+				{% if who == 'self' %}
+				<div class="box">
+					<h3>Notifications</h3>
+					<div id="people2" class="collapse">
+						<div class="people">
+							<p><span><a href="" ><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" class="img-thumbnail thumb"></a></span> fulano</p>
+						</div>
+					</div>
+					<hr>
+				</div>
+				{% endif %}
 			</div>
 
 

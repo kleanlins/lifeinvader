@@ -5,11 +5,29 @@ mariadb_connection = mariadb.connect(user='root', password=secret_data.password,
 cursor = mariadb_connection.cursor()
 
 
+def register(name, email, password, pic):
+
+    cmmd = "select * from user where email='{}'".format(email)
+    cursor.execute(cmmd)
+    status = [each for each in cursor]
+
+    if len(status) > 0:
+        return 'deny'
+
+    cmmd = "insert into user(name, email, password, pic) "
+    cmmd2 = "value('{}','{}','{}','{}')".format(name, email, password, pic)
+    cursor.execute(cmmd + cmmd2)
+
+    mariadb_connection.commit()
+    return cursor.lastrowid
+
+
+    return status
+
 
 def login_check(email, password):
         cmmd = "select * from user where email='" + email + "'"
         cursor.execute(cmmd)
-
 
         for each in cursor:
             print(each)
@@ -19,44 +37,39 @@ def login_check(email, password):
             return '', each[0] # each[0] is the user ID
 
 
-def get_posts(fromwho, qtd):
-    if fromwho != '':
-        cmmd = "select * from post where id_owner='{}'".format(fromwho)
-        cursor.execute(cmmd)
+def get_posts(location, type):
 
-        posts_list = list()
+    cmmd = "select user.id, user.name, user.pic, post.content, post.image from post inner "
+    cmmd2 = "join user on user.id=post.id_owner where id_location='{}' and type_owner='{}' order by post.id desc".format(location, type)
+    cursor.execute(cmmd + cmmd2)
 
-        for each in cursor:
-            posts_list.append(each)
+    posts_list = list()
 
-        return posts_list
+    for each in cursor:
+        posts_list.append(each)
 
-    cmmd = "select * from post"
-    cursor.execute(cmmd)
+    return posts_list
 
-    posts_list = [each for each in cursor]
-
-    # for each in cursor:
-    #     posts_list.append(each)
 
 
 def get_info_from_id(id):
-    cmmd = "select name, age, email from user where id='{}'".format(id)
+    cmmd = "select name, age, email, pic from user where id='{}'".format(id)
     cursor.execute(cmmd)
 
     name = ''
     age = ''
     email = ''
+    pic = ''
 
     for each in cursor:
-        name, age, email = each
+        name, age, email, pic = each
 
-    return name, age, email
+    return name, age, email, pic
 
 
 def get_friends(id):
     print("Getting friends from id={}".format(id))
-    cmmd = "select user.id, user.name from user inner join friendship on "
+    cmmd = "select user.id, user.name, user.pic from user inner join friendship on "
     cmmd2 = "user.id=friendship.friend_id where friendship.user_id={}".format(id)
     cursor.execute(cmmd + cmmd2)
 
@@ -64,7 +77,7 @@ def get_friends(id):
     for each in cursor:
         friends_data.append(each)
 
-    cmmd = "select user.id, user.name from user inner join friendship on "
+    cmmd = "select user.id, user.name, user.pic from user inner join friendship on "
     cmmd2 = "user.id=friendship.user_id where friendship.friend_id={}".format(id)
     cursor.execute(cmmd + cmmd2)
 
@@ -72,7 +85,7 @@ def get_friends(id):
         if each not in friends_data:
             friends_data.append(each)
 
-    print(friends_data)
+    # print(friends_data)
     return friends_data
 
 def get_groups(id):
@@ -83,18 +96,20 @@ def get_groups(id):
 
     groups_data = [each for each in cursor]
 
-    print(groups_data)
+    # print(groups_data)
     return groups_data;
 
 def get_timeline_posts(id):
+    print("Getting friend posts from id={}".format(id))
 
     friends = get_friends(id)
+    friends.append([id])
     friends_posts = list()
 
 
     for each in friends:
 
-        cmmd="select user.name, user.id, post.content from user inner join post on "
+        cmmd="select post.id, user.name, user.id, user.pic, post.content from user inner join post on "
         cmmd2 = "user.id=post.id_location and post.id_location=post.id_owner where user.id={} and post.type_owner='U'".format(each[0])
 
         cursor.execute(cmmd + cmmd2)
@@ -102,12 +117,12 @@ def get_timeline_posts(id):
         for each in cursor:
             friends_posts.append(each)
 
-    print(friends_posts)
+    friends_posts = sorted(friends_posts, key=lambda x:x[0], reverse=True)
     return friends_posts;
 
 
 def get_all_users(id):
-    cmmd = "select user.name, user.id from user where id!={}".format(id)
+    cmmd = "select user.name, user.id, user.pic from user where id!={}".format(id)
     cursor.execute(cmmd)
 
     all_users = [each for each in cursor]
@@ -115,10 +130,35 @@ def get_all_users(id):
     return all_users
 
 def get_all_groups():
-    cmmd = "select name from groups"
+    cmmd = "select * from groups"
 
     cursor.execute(cmmd)
 
-    all_groups = [each[0] for each in cursor]
+    all_groups = [each for each in cursor]
 
     return all_groups
+
+def is_friend(id, id2):
+    cmmd = "select type from friendship where user_id={} and friend_id={}".format(id, id2)
+    cursor.execute(cmmd)
+
+    status = [each[0] for each in cursor]
+
+    return status[0] if len(status) > 0 else 'not friends'
+
+def post(id_owner, id_location, type_owner, text, pic):
+
+    # insert into post(id_owner, id_location, type_owner, content, image) value(,,'','','')"
+
+    cmmd = "insert into post(id_owner, id_location, type_owner, content, image) "
+    cmmd2 = "value({},{},'{}','{}','{}')".format(id_owner, id_location, type_owner, text, pic)
+    cursor.execute(cmmd + cmmd2)
+
+    mariadb_connection.commit()
+
+
+def add_friend(id):
+    pass
+
+def remove_friend(id):
+    pass

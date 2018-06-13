@@ -30,17 +30,22 @@
 					<h2>We just need to know a little about you:</h2>
 					<form action="{% url 'success' %}" method='post'>
 						<div class="form-group">
-							<label for="userName" class="labelName">First name:</label>
-							<input type="name" class="form-control" name='uname' id="userName" placeholder="Your Name" required>
+							<label for="userName" class="labelName">Your name:</label>
+							<input type="name" class="form-control" name='uname' id="userName" placeholder="Your name" required>
 						</div>
 						<div class="form-group">
 							<label for="userEmail" class="labelEmail">Email:</label>
-							<input type="email" class="form-control" name='uemail' id="userEmail" placeholder="Your Email" required>
+							<input type="email" class="form-control" name='uemail' id="userEmail" placeholder="Your email" required>
 						</div>
 						<div class="form-group">
 							<label for="userPassword" class="labelPassword">Password:</label>
-							<input type="password" class="form-control" name='upassword' id="userPassword" placeholder="Your Password" required>
+							<input type="password" class="form-control" name='upassword' id="userPassword" placeholder="Your password" required>
 						</div>
+						<div class="form-group">
+							<label for="userPassword" class="labelPassword">Profile picture:</label>
+							<input type="file" name="pic" accept="image/*" class="form-control" placeholder="Your profile picture">
+						</div>
+							<label class="labelPassword">{{ msg }}</label><br>
 						<a><button type="submit" class="btn btn-large submitButton">Submit</button></a>
 					</form>
 				</div>

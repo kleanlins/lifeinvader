@@ -23,11 +23,13 @@ urlpatterns = [
     path('', views.home, name='start_page'),
     path('login/', views.login, name='login'),
     path('signup/', views.signup, name='signup'),
-    path('success/', views.success, name='success'),
+    path('result/', views.success, name='success'),
     path('profile_login/', views.user_login, name='user_login'),
     path('profile/', views.show_profile, name='show_profile'),
     path('home/', views.show_timeline, name='timeline'),
     path('profile/<int:id>/', views.visit_profile, name='visit_profile'),
+    path('group/<int:id>/', views.visit_group, name='visit_group'),
+    path('gmanager/', views.group_manager, name='group_manager'),
 ]
 
 if settings.DEBUG:
