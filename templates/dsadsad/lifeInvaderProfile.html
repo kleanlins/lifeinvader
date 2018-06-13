@@ -40,14 +40,14 @@
 					<hr>
 					<button class="btn btn-large peopleButton" data-toggle="collapse" data-target="#groups">Groups</button>
 					<div id="groups" class="collapse">
-						{% for id, name, relation, pic in groups %}
+						{% for id, name, pic in groups %}
 						<div class="people">
 							<p><span><a href="{% url 'visit_group' id %}" ><img src="/static/{{pic}}" class="img-thumbnail thumb"></a></span> {{name}}</p>
 						</div>
 						{% endfor %}
 						<div class="people">
 							{% if who == 'self' %}
-							<a href="{% url 'group_manager' %}"><button class="btn btn-large peopleButton">Manage Groups</button></a>
+							<a href="./lifeInvaderProfileGroups.html"><button class="btn btn-large peopleButton">Manage Groups</button></a>
 							{% endif %}
 						</div>
 					</div>

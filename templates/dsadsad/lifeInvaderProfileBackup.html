@@ -40,7 +40,7 @@
 					<hr>
 					<button class="btn btn-large peopleButton" data-toggle="collapse" data-target="#groups">Groups</button>
 					<div id="groups" class="collapse">
-						{% for id, name, relation, pic in groups %}
+						{% for id, name, pic in groups %}
 						<div class="people">
 							<p><span><a href="{% url 'visit_group' id %}" ><img src="/static/{{pic}}" class="img-thumbnail thumb"></a></span> {{name}}</p>
 						</div>
@@ -77,13 +77,6 @@
 					</div>
 				</div>
 
-				<div class="commentBox">
-					<form>
-						<textarea class="form-control" rows="3" placeholder="Send a message to yout friend! "></textarea>
-						<button class="btn btn-large submitButton" type="submit">Submit</button>
-					</form>
-				</div>
-
 				<div class="row">
 					<div class="col"> <!-- Start posts -->
 						<div class="row"> <!-- start post 1 -->
@@ -93,18 +86,6 @@
 									<div>
 										<p><span><a href="{% url 'visit_profile' id %}" ><img src="/static/{{pic}}" class="img-thumbnail thumb"></a></span>  {{name}}:</p>
 										<h5>{{ content }}</h5>
-										<hr>
-										<div class="comentario">
-											<div>
-												<h5><span><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" class="img-thumbnail thumb"></span>Diego Marques: Comentário.</h5>
-											</div>
-										</div>
-										<div class="commentBox">
-											<form>
-												<textarea class="form-control" rows="3" placeholder="Submit a Comment: "></textarea>
-												<button class="btn btn-large submitButton" type="submit">Submit</button>
-											</form>
-										</div>
 									</div>
 								</div>
 							</div>

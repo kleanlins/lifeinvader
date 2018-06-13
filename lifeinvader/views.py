@@ -144,11 +144,12 @@ def group_manager(request):
 
     id = request.session['user_id']
     groups = databasequeries.get_groups(id)
+    not_member_groups = databasequeries.get_groups(id, "yes")
 
 
-
-
-    return render(request, 'lifeInvaderProfileGroups.html')
+    return render(request, 'lifeInvaderProfileGroups.html',
+    {'groups':groups,
+    'nmgroups':not_member_groups})
 
 
 def visit_group(request, id):

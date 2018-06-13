@@ -30,7 +30,7 @@ def login_check(email, password):
         cursor.execute(cmmd)
 
         for each in cursor:
-            print(each)
+            # print(each)
             if each[3] != password:
                 return "Your password is wrong", ''
 
@@ -88,10 +88,13 @@ def get_friends(id):
     # print(friends_data)
     return friends_data
 
-def get_groups(id):
+def get_groups(id, exc=None):
     print("Getting groups from id={}".format(id))
-    cmmd = "select id, name, relationship from groups inner join user_group"
-    cmmd2 = " on groups.id=user_group.group_id where id_user={}".format(id)
+    cmmd = "select id, name, relationship, groups.image from groups inner join user_group"
+    if exc == None:
+        cmmd2 = " on groups.id=user_group.group_id where id_user={}".format(id)
+    else:
+        cmmd2 = " on groups.id=user_group.group_id where id_user!={}".format(id)
     cursor.execute(cmmd + cmmd2)
 
     groups_data = [each for each in cursor]
