@@ -53,6 +53,10 @@ def get_posts(location, type):
 
 
 def get_info_from_id(id):
+
+    # global cursor
+    # cursor = mariadb_connection.cursor()
+
     cmmd = "select name, age, email, pic from user where id='{}'".format(id)
     cursor.execute(cmmd)
 
@@ -70,7 +74,7 @@ def get_info_from_id(id):
 def get_friends(id):
     print("Getting friends from id={}".format(id))
     cmmd = "select user.id, user.name, user.pic from user inner join friendship on "
-    cmmd2 = "user.id=friendship.friend_id where friendship.user_id={}".format(id)
+    cmmd2 = "user.id=friendship.friend_id where friendship.user_id={} and friendship.type='friends'".format(id)
     cursor.execute(cmmd + cmmd2)
 
     friends_data = list()
@@ -78,7 +82,7 @@ def get_friends(id):
         friends_data.append(each)
 
     cmmd = "select user.id, user.name, user.pic from user inner join friendship on "
-    cmmd2 = "user.id=friendship.user_id where friendship.friend_id={}".format(id)
+    cmmd2 = "user.id=friendship.user_id where friendship.friend_id={} and friendship.type='friends'".format(id)
     cursor.execute(cmmd + cmmd2)
 
     for each in cursor:
@@ -142,7 +146,7 @@ def get_all_groups():
     return all_groups
 
 def is_friend(id, id2):
-    cmmd = "select type from friendship where user_id={} and friend_id={}".format(id, id2)
+    cmmd = "select type from friendship where (user_id={0} and friend_id={1}) or (friend_id={0} and user_id={1})".format(id, id2)
     cursor.execute(cmmd)
 
     status = [each[0] for each in cursor]
@@ -155,13 +159,65 @@ def post(id_owner, id_location, type_owner, text, pic):
 
     cmmd = "insert into post(id_owner, id_location, type_owner, content, image) "
     cmmd2 = "value({},{},'{}','{}','{}')".format(id_owner, id_location, type_owner, text, pic)
-    cursor.execute(cmmd + cmmd2)
 
+    cursor.execute(cmmd + cmmd2)
     mariadb_connection.commit()
 
 
-def add_friend(id):
-    pass
+def add_friend(user_id, friend_id):
 
-def remove_friend(id):
-    pass
+    print("user {} is adding {}".format(user_id, friend_id))
+
+    cmmd = "insert into friendship value({},{},'requested')".format(user_id, friend_id)
+
+    cursor.execute(cmmd)
+    mariadb_connection.commit()
+
+def remove_friend(user_id, friend_id):
+
+    print("user {} is removing {}".format(user_id, friend_id))
+
+    cmmd = "delete from friendship where (user_id={} and friend_id={}) ".format(user_id, friend_id)
+    cmmd2 = "or (user_id={} and friend_id={})".format(friend_id, user_id)
+
+    cursor.execute(cmmd + cmmd2)
+    mariadb_connection.commit()
+
+
+def acc_friend(user_id, friend_id):
+
+    print("user {} is acepting {}".format(user_id, friend_id))
+
+    cmmd = "update friendship set type='friends' "
+    cmmd2 = "where user_id={} and friend_id={}".format(friend_id, user_id)
+
+    cursor.execute(cmmd + cmmd2)
+    mariadb_connection.commit()
+
+    return 'ok'
+
+
+def ref_friend(user_id, friend_id):
+
+    print("user {} is refusing {}".format(user_id, friend_id))
+
+    cmmd = "delete from friendship where "
+    cmmd2 = "user_id={} and friend_id={}".format(friend_id, user_id)
+
+    cursor.execute(cmmd + cmmd2)
+    mariadb_connection.commit()
+
+    return 'ok'
+
+
+def get_requests(user_id):
+
+    cmmd = "select user.id, user.name, user.pic from user inner join "
+    cmmd2 = "friendship on user.id=friendship.user_id where "
+    cmmd3 = "friendship.type='requested' and friendship.friend_id={}".format(user_id)
+
+    cursor.execute(cmmd + cmmd2 + cmmd3)
+
+    requests = [each for each in cursor]
+
+    return requests

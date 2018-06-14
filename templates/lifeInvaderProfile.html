@@ -1,7 +1,7 @@
 	<!DOCTYPE html>
 	<html>
 	<head>
-		<title>Lifeinvader</title>
+		<title>LifeInvader</title>
 		<link rel="stylesheet" type="text/css" href="/static/bootstrap.css">
 		<link rel="stylesheet" type="text/css" href="/static/lifeInvaderProfile.css">
 		<link href="https://fonts.googleapis.com/css?family=Do+Hyeon" rel="stylesheet">
@@ -19,7 +19,7 @@
 						<li><a href="{% url 'show_profile' %}" method='post'>My profile</a></li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
-						<li><a href="./lifeInvaderLogin.html">Logout</a></li>
+						<li><a href="{% url 'logout' %}">Logout</a></li>
 					</ul>
 				</div><!-- /.navbar-collapse -->
 			</div><!-- /.container-fluid -->
@@ -66,20 +66,22 @@
 							<a href="./lifeInvaderProfileEditor.html"><button class="btn btn-large peopleButton">Edit informations</button></a>
 						{% else %}
 							{% if status == 'friends' %}
-								<a href="./lifeInvaderProfileEditor.html"><button class="btn btn-large peopleButton">Remover amigo</button></a>
+								<a href="{% url 'remove_friend' %}"><button class="btn btn-large peopleButton">Remove friend</button></a>
+							{% elif status == 'requested' %}
+								<button class="btn btn-large peopleButton">Request sent</button>
 							{% else %}
-								<a href="./lifeInvaderProfileEditor.html"><button class="btn btn-large peopleButton">Adicionar amigo</button></a>
+								<a href="{% url 'add_friend' %}"><button class="btn btn-large peopleButton">Add user</button></a>
 							{% endif %}
 							<hr>
-							<a href="./lifeInvaderProfileEditor.html"><button class="btn btn-large peopleButton">Bloquear usuário</button></a>
+							<a href="./lifeInvaderProfileEditor.html"><button class="btn btn-large peopleButton">Block user</button></a>
 						{% endif %}
 
 					</div>
 				</div>
 
 				<div class="commentBox">
-					<form>
-						<textarea class="form-control" rows="3" placeholder="Send a message to yout friend! "></textarea>
+					<form method='post'>
+						<textarea name='post_text' class="form-control" rows="3" placeholder="Post something ;)"></textarea>
 						<button class="btn btn-large submitButton" type="submit">Submit</button>
 					</form>
 				</div>
@@ -100,7 +102,7 @@
 											</div>
 										</div>
 										<div class="commentBox">
-											<form>
+											<form method='post'>
 												<textarea class="form-control" rows="3" placeholder="Submit a Comment: "></textarea>
 												<button class="btn btn-large submitButton" type="submit">Submit</button>
 											</form>
@@ -116,13 +118,15 @@
 			<div class="col-lg-3">
 				{% if who == 'self' %}
 				<div class="box">
-					<h3>Notifications</h3>
-					<div id="people2" class="collapse">
+					<h3>Friendship requests</h3>
 						<div class="people">
-							<p><span><a href="" ><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" class="img-thumbnail thumb"></a></span> fulano</p>
+							{% for id, name, pic in requests %}
+							<p><span><a href="{% url 'visit_profile' id %}" ><img id='{{id}}' src="/static/{{pic}}" class="img-thumbnail thumb"></a></span> {{name}}
+							<a href="{% url 'acc_friend' id %}" class="btn btn-large submitButton" >Acept</a>
+							<a href="{% url 'ref_friend' id %}" class="btn btn-large submitButton" >Refuse</a></p>
+							{% endfor %}
 						</div>
-					</div>
-					<hr>
+						<hr>
 				</div>
 				{% endif %}
 			</div>

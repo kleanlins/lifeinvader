@@ -30,6 +30,11 @@ urlpatterns = [
     path('profile/<int:id>/', views.visit_profile, name='visit_profile'),
     path('group/<int:id>/', views.visit_group, name='visit_group'),
     path('gmanager/', views.group_manager, name='group_manager'),
+    path('removed_friend/', views.remove_friend, name='remove_friend'),
+    path('added_friend/', views.add_friend, name='add_friend'),
+    path('acced_friend/<int:id>/', views.acc_friend, name='acc_friend'),
+    path('reffed_friend/<int:id>/', views.ref_friend, name='ref_friend'),
+    path('login/', views.logout, name='logout'),
 ]
 
 if settings.DEBUG:

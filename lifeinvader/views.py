@@ -67,6 +67,7 @@ def show_profile(request):
     name, age, email, pic = databasequeries.get_info_from_id(id)
     friends = databasequeries.get_friends(id)
     groups = databasequeries.get_groups(id)
+    friends_requests = databasequeries.get_requests(id)
 
     who = 'self'
 
@@ -78,6 +79,7 @@ def show_profile(request):
     'posts':posts,
     'friends':friends,
     'groups':groups,
+    'requests':friends_requests,
     'who':who})
 
 @csrf_exempt
@@ -113,12 +115,27 @@ def show_timeline(request):
     'all_groups':all_groups})
 
 
+@csrf_exempt
 def visit_profile(request, id):
+
+    user_id = request.session['user_id']
 
     if id == request.session['user_id']:
         return show_profile(request)
 
     else:
+        request.session['someoneelse_id'] = id
+
+        try:
+            post_text = request.POST.get('post_text', '')
+            post_img = ''
+            if(post_text != ''):
+                databasequeries.post(user_id, id, "U", post_text, post_img);
+
+        except Exception as e:
+            print(e)
+
+
         posts = databasequeries.get_posts(id, "U")
         name, age, email, pic = databasequeries.get_info_from_id(id)
         friends = databasequeries.get_friends(id)
@@ -126,7 +143,7 @@ def visit_profile(request, id):
         status = databasequeries.is_friend(request.session['user_id'], id)
         print(request.session['user_id'], id, "are", status)
 
-        who = ''
+        who = id
 
         return render(request, 'lifeInvaderProfile.html',
         {'name':name,
@@ -152,5 +169,47 @@ def group_manager(request):
     'nmgroups':not_member_groups})
 
 
+def remove_friend(request):
+
+    user_id = request.session['user_id']
+    who = request.session['someoneelse_id']
+
+    databasequeries.remove_friend(user_id, who)
+
+    return visit_profile(request, who)
+
+
+def add_friend(request):
+
+    user_id = request.session['user_id']
+    who = request.session['someoneelse_id']
+
+    databasequeries.add_friend(user_id, who)
+
+    return visit_profile(request, who)
+
+def acc_friend(request, id):
+
+    user_id = request.session['user_id']
+
+    status = databasequeries.acc_friend(user_id, id)
+
+    return show_profile(request)
+
+
+def ref_friend(request, id):
+
+    user_id = request.session['user_id']
+
+    status = databasequeries.ref_friend(user_id, id)
+
+    return show_profile(request)
+
+
 def visit_group(request, id):
     pass
+
+def logout(request):
+    request.session['user_id'] = 'none'
+
+    return render(request, 'lifeInvaderLogin.html')
