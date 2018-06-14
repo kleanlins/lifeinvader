@@ -2,8 +2,8 @@
 	<html>
 	<head>
 		<title>Lifeinvader</title>
-		<link rel="stylesheet" type="text/css" href="bootstrap.css">
-		<link rel="stylesheet" type="text/css" href="lifeInvaderGroup.css">
+		<link rel="stylesheet" type="text/css" href="/static/bootstrap.css">
+		<link rel="stylesheet" type="text/css" href="/static/lifeInvaderGroup.css">
 		<link href="https://fonts.googleapis.com/css?family=Do+Hyeon" rel="stylesheet">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 	</head>
@@ -12,111 +12,90 @@
 		<nav class="navbar navbar-default">
 			<div class="container-fluid">
 				<div class="navbar-header">
-					<a class="navbar-brand" href="./lifeInvaderTimeline.html">Lifeinvader</a>
+					<a class="navbar-brand" href="{% url 'timeline' %}">Lifeinvader</a>
 				</div>
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 					<ul class="nav navbar-nav">
-						<li><a href="./lifeInvaderProfile.html">My profile</a></li>
+						<li><a href="{% url 'show_profile' %}">My profile</a></li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
-						<li><a href="./lifeInvaderLogin.html">Logout</a></li>
+						<li><a href="{% url 'logout' %}">Logout</a></li>
 					</ul>
 				</div><!-- /.navbar-collapse -->
 			</div><!-- /.container-fluid -->
 		</nav>
 		<!-- colunas da timeline! -->
-		
+
 			<div class="col-lg-3">
 				<div class="leftBox">
-					<h4><span><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" class="img-thumbnail thumb"></span>  João Paulo Botelho de Santana</h4>
+					<h4><span><img src="{{pic}}" class="img-thumbnail thumb"></span>  {{name}}</h4>
 					<hr>
-					<a href="./lifeInvaderProfile.html"><button class="btn btn-large peopleButton">My Friends</button></a>
-					<hr>
-					<a href="./lifeInvaderProfile.html"><button class="btn btn-large peopleButton">My Groups</button></a>
-					<hr>
+					<button class="btn btn-large peopleButton" data-toggle="collapse" data-target="#groups">Members</button>
+					<div id="groups" class="collapse">
+						{% for id, name, pic, rl in members %}
+						<div class="people">
+							<p><span><a href="{% url 'visit_profile' id %}" ><img src="/static/{{pic}}" class="img-thumbnail thumb"></a></span> {{name}}</p>
+						</div>
+						{% endfor %}
+						{% if relation == 'owner' %}
+						<div class="people">
+							<a href="{% url 'members_manager' %}"><button class="btn btn-large peopleButton">Manage members</button></a>
+						</div>
+						{% endif %}
+					</div>
 				</div>
 			</div>
 			<div class="col-lg-6">
 				<div class="row">
 					<div class="box">
-						<form>
-							<span><input type="file" name="pic" accept="image/*" class="imgSender"></span>
-							<textarea class="form-control" rows="3" placeholder="What are you thinking? Share with us!"></textarea>
+						<form method='post'>
+							<span><input type="file" name="pic" accept="image/*" class="imgSender" ></span>
+							<textarea name='post_text' class="form-control" rows="3" placeholder="Post something ;)"></textarea>
 							<button class="btn btn-large submitButton" type="submit">Submit</button>
 						</form>
 					</div>
 				</div>
-				
+
 				<div class="row">
 					<div class="col"> <!-- Start posts -->
 						<div class="row"> <!-- start post 1 -->
+							{% for id, name, pic, content, image in posts%}
 							<div class="col">
 								<div class="centerBox">
 									<div>
-										<p><span><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" class="img-thumbnail thumb"></span>  Diego Marques Is feeling amazing!</p>
-										<h5>just got my hands on the new Google's pyxel 2!!</h5>
+										<p><span><img src="/static/{{pic}}" class="img-thumbnail thumb"></span>  {{name}} </p>
+										<h5>{{content}}</h5>
 									</div>
 								</div>
 							</div>
+							{% endfor %}
 						</div> <!-- end post 1 -->
-						<div class="row"> <!-- start post 1 -->
-							<div class="col">
-								<div class="centerBox">
-									<div>
-										<p><span><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" class="img-thumbnail thumb"></span>  Diego Marques Is feeling amazing!</p>
-										<h5>just got my hands on the new Google's pyxel 2!!</h5>
-									</div>
-								</div>
-							</div>
-						</div> <!-- end post 1 -->
-						<div class="row"> <!-- start post 1 -->
-							<div class="col">
-								<div class="centerBox">
-									<div>
-										<p><span><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" class="img-thumbnail thumb"></span>  Diego Marques Is feeling amazing!</p>
-										<h5>just got my hands on the new Google's pyxel 2!!</h5>
-									</div>
-								</div>
-							</div>
-						</div> <!-- end post 1 -->
-					</div>
 				</div>
 			</div>
-			<div class="col-lg-3">
-				<div class="box">
-					<h3>Lifeinvader Community</h3>
-					<hr>
-					<button class="btn btn-large peopleButton" data-toggle="collapse" data-target="#people">People</button>
-					<div id="people" class="collapse">
-						<div class="people">
-							<p><span><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" class="img-thumbnail thumb"></span>Diego Marques</p>
-						</div>
-						<div class="people">
-							<p><span><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" class="img-thumbnail thumb"></span>Mariana Santana</p> 
-						</div>
-						<div class="people">
-							<p><span><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" class="img-thumbnail thumb"></span>Kleberson Santos</p> 
-						</div>
+		</div>
+
+		{% if relation != 'owner' and relation != 'member' %}
+		<div class="col-lg-3">
+			<div class="box">
+				<h3>Wanna join?</h3>
+					<div class="people">
+						<a href="" class="btn btn-large submitButton" >Request to join</a>
 					</div>
-					<hr>
-					<button class="btn btn-large peopleButton" data-toggle="collapse" data-target="#groups">Groups</button>
-					<div id="groups" class="collapse">
-						<div class="people">
-							<p><span><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" class="img-thumbnail thumb"></span>Grupo um</p>
-						</div>
-						<div class="people">
-							<p><span><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" class="img-thumbnail thumb"></span>Grupo dois</p> 
-						</div>
-						<div class="people">
-							<p><span><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" class="img-thumbnail thumb"></span>Grupo três</p> 
-						</div>
-					</div>
-					<hr>
-				</div>
 			</div>
-			
+		</div>
+		{% elif relation == 'requested' %}
+		<div class="col-lg-3">
+			<div class="box">
+				<h3>You've already requested to join!</h3>
+					<div class="people">
+						<h4>Just wait :)</h4>
+					</div>
+			</div>
+		</div>
+		{% endif %}
+
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script type="text/javascript" src="bootstrap.js"></script>
+	<script type="text/javascript" src="/static/bootstrap.js"></script>
 	</body>
 	</html>

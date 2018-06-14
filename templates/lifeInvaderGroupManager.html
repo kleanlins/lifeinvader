@@ -26,25 +26,20 @@
 		</nav>
 		<!-- colunas da timeline! -->
 			<h1>Group Management</h1>
-			<div  class="col-lg-3">
-				<div style='padding-bottom:60px' class="box">
-					<form action="{% url 'create_group' %}" method='post'>
-						<h2>Deseja criar um grupo?</h2>
-						<span><input type="file" name="pic" accept="image/*" class="imgSender" ></span>
-						<input type='text' name='group_name' class="form-control" rows="3"></text>
-						<br><button class="btn btn-large submitButton" type="submit">Submit</button>
-					</form>
-				</div>
+			<div class="col-lg-3">
 			</div>
 			<div class="col-lg-6">
 				<div class="row">
 					<div class="box">
-						<h2>My Groups</h2>
+						<h2>Members</h2>
 						<hr>
-						{% for id, name, rl, pic in groups %}
+						{% for id, name, pic, rl in members %}
 						<div>
 							<h3><span class="img"><img src="/static/{{pic}}" class="img-thumbnail thumb"></span>{{name}}
-							<a href="" class="btn btn-large peopleButton">Leave Group</a></h3>
+							{% if id != user_id %}
+							<a href="" class="btn btn-large peopleButton">Make an ADMIN</a>
+							<a href="" class="btn btn-large peopleButton">Kick</a>
+							{% endif %}
 						</div>
 						<hr>
 						{% endfor %}
@@ -52,19 +47,22 @@
 				</div>
 				<div class="row">
 					<div class="box">
-						<h2>Groups I'm not a member</h2>
+						<h2>Requests</h2>
 						<hr>
-						{% for id, name, rl, pic in nmgroups %}
+						{% for id, name, pic, rl in requests %}
+						{% if rl == 'requested' %}
 						<div>
-							<h3><span class="img"><img src="/static/{{pic}}" class="img-thumbnail thumb"></span>{{name}} <button class="btn btn-large peopleButton">Request Invite</button></h3>
+							<h3><span class="img"><img src="/static/{{pic}}" class="img-thumbnail thumb"></span>{{name}}
+							<a href="" class="btn btn-large peopleButton">Accept</a>
+							<a href="" class="btn btn-large peopleButton">Refuse</a>
 						</div>
 						<hr>
+						{% endif %}
 						{% endfor %}
 					</div>
 				</div>
 			</div>
 			<div class="col-lg-3">
-
 			</div>
 
 

@@ -54,9 +54,6 @@ def get_posts(location, type):
 
 def get_info_from_id(id):
 
-    # global cursor
-    # cursor = mariadb_connection.cursor()
-
     cmmd = "select name, age, email, pic from user where id='{}'".format(id)
     cursor.execute(cmmd)
 
@@ -221,3 +218,73 @@ def get_requests(user_id):
     requests = [each for each in cursor]
 
     return requests
+
+
+def get_group_info(id):
+
+    cmmd = "select name, image from groups where id={}".format(id)
+
+    cursor.execute(cmmd)
+
+    name = ''
+    pic = ''
+
+    for each in cursor:
+        name, pic = each
+
+    return name, pic
+
+
+def get_members(id):
+
+    cmmd = "select user.id, user.name, user.pic, user_group.relationship from user inner join "
+    cmmd2 = "user_group on user.id=user_group.id_user where user_group.group_id={} ".format(id)
+    cmmd3 = "and (user_group.relationship='member' or user_group.relationship='owner')"
+
+    cursor.execute(cmmd + cmmd2 + cmmd3)
+
+    members = [each for each in cursor]
+
+    return members
+
+def relation_group(user_id, group_id):
+
+    cmmd = "select relationship from user_group where "
+    cmmd2 = "id_user={} and group_id={}".format(user_id, group_id)
+
+    cursor.execute(cmmd + cmmd2)
+
+    relation = [each[0] for each in cursor]
+
+    return relation[0]
+
+
+def get_group_requests(id):
+
+    cmmd = "select user.id, user.name, user.pic, user_group.relationship from user inner join "
+    cmmd2 = "user_group on user.id=user_group.id_user where user_group.group_id={} ".format(id)
+    cmmd3 = "and user_group.relationship='requested'"
+
+    cursor.execute(cmmd + cmmd2 + cmmd3)
+
+    requesters = [each for each in cursor]
+
+    return requesters
+
+
+def create_group(id, name, pic):
+
+    print("creating group", id, name, pic)
+
+    cmmd = "insert into groups(name, image) value('{}','{}')".format(name, pic)
+    print(cmmd)
+    cursor.execute(cmmd)
+    group_id =  cursor.lastrowid
+
+    cmmd = "insert into user_group value({},'{}',{})".format(id, "owner", group_id)
+    print(cmmd)
+    cursor.execute(cmmd)
+
+    mariadb_connection.commit()
+
+    return group_id

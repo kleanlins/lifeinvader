@@ -79,8 +79,9 @@
 					</div>
 				</div>
 
-				<div class="commentBox">
+				<div class="box">
 					<form method='post'>
+						<span><input type="file" name="pic" accept="image/*" class="imgSender" ></span>
 						<textarea name='post_text' class="form-control" rows="3" placeholder="Post something ;)"></textarea>
 						<button class="btn btn-large submitButton" type="submit">Submit</button>
 					</form>
@@ -93,20 +94,10 @@
 							<div class="col">
 								<div class="centerBox">
 									<div>
-										<p><span><a href="{% url 'visit_profile' id %}" ><img src="/static/{{pic}}" class="img-thumbnail thumb"></a></span>  {{name}}:</p>
+										<p><span><a href="{% url 'visit_profile' id %}" ><img src="/static/{{pic}}" class="img-thumbnail thumb">{{name}}:</span></a></p>
 										<h5>{{ content }}</h5>
 										<hr>
-										<div class="comentario">
-											<div>
-												<h5><span><img src="https://www.vccircle.com/wp-content/uploads/2017/03/default-profile.png" class="img-thumbnail thumb"></span>Diego Marques: Comentário.</h5>
-											</div>
-										</div>
-										<div class="commentBox">
-											<form method='post'>
-												<textarea class="form-control" rows="3" placeholder="Submit a Comment: "></textarea>
-												<button class="btn btn-large submitButton" type="submit">Submit</button>
-											</form>
-										</div>
+										
 									</div>
 								</div>
 							</div>
@@ -115,8 +106,10 @@
 					</div>
 				</div>
 			</div>
+
 			<div class="col-lg-3">
 				{% if who == 'self' %}
+				{% if r == 'yes' %}
 				<div class="box">
 					<h3>Friendship requests</h3>
 						<div class="people">
@@ -127,7 +120,8 @@
 							{% endfor %}
 						</div>
 						<hr>
-				</div>
+				</div>\
+				{% endif %}
 				{% endif %}
 			</div>
 

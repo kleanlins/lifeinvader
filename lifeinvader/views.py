@@ -128,7 +128,7 @@ def visit_profile(request, id):
 
         try:
             post_text = request.POST.get('post_text', '')
-            post_img = ''
+            post_img = request.POST.get('pic', '')
             if(post_text != ''):
                 databasequeries.post(user_id, id, "U", post_text, post_img);
 
@@ -155,18 +155,6 @@ def visit_profile(request, id):
         'groups':groups,
         'who':who,
         'status':status})
-
-
-def group_manager(request):
-
-    id = request.session['user_id']
-    groups = databasequeries.get_groups(id)
-    not_member_groups = databasequeries.get_groups(id, "yes")
-
-
-    return render(request, 'lifeInvaderProfileGroups.html',
-    {'groups':groups,
-    'nmgroups':not_member_groups})
 
 
 def remove_friend(request):
@@ -206,8 +194,81 @@ def ref_friend(request, id):
     return show_profile(request)
 
 
+def group_manager(request):
+
+    id = request.session['user_id']
+    groups = databasequeries.get_groups(id)
+    not_member_groups = databasequeries.get_groups(id, "yes")
+
+
+    return render(request, 'lifeInvaderProfileGroups.html',
+    {'groups':groups,
+    'nmgroups':not_member_groups})
+
+@csrf_exempt
 def visit_group(request, id):
-    pass
+
+    user_id = request.session['user_id']
+
+    request.session['group_id'] = id
+
+    try:
+        post_text = request.POST.get('post_text', '')
+        post_img = request.POST.get('pic', '')
+        if(post_text != ''):
+            databasequeries.post(user_id, id, "G", post_text, post_img);
+
+    except Exception as e:
+        print(e)
+
+    name, pic = databasequeries.get_group_info(id)
+    posts = databasequeries.get_posts(id, "G")
+    members = databasequeries.get_members(id)
+    relation = databasequeries.relation_group(user_id, id)
+
+    return render(request, 'lifeInvaderGroup.html',
+    {'name':name,
+    'pic':pic,
+    'posts':posts,
+    'members':members,
+    'relation':relation})
+
+
+def members_manager(request):
+
+    user_id = request.session['user_id']
+    id = request.session['group_id']
+    members = databasequeries.get_members(id)
+    requests = databasequeries.get_group_requests(id)
+    r = ''
+    if len(requests)>0:
+        r = 'yes'
+
+    return render(request, "lifeInvaderGroupManager.html",
+    {'user_id':user_id,
+    'type':'group',
+    'members':members,
+    'requests':requests,
+    'r':r})
+
+
+@csrf_exempt
+def create_group(request):
+
+    user_id = request.session['user_id']
+    group_id = ''
+
+    try:
+        post_text = request.POST.get('group_name', '')
+        post_img = request.POST.get('pic', '')
+        if(post_text != ''):
+            group_id = databasequeries.create_group(user_id, post_text, post_img)
+
+    except Exception as e:
+        print(e)
+
+
+    return visit_group(request, group_id)
 
 def logout(request):
     request.session['user_id'] = 'none'
