@@ -209,7 +209,6 @@ def group_manager(request):
 def visit_group(request, id):
 
     user_id = request.session['user_id']
-
     request.session['group_id'] = id
 
     try:
@@ -227,11 +226,12 @@ def visit_group(request, id):
     relation = databasequeries.relation_group(user_id, id)
 
     return render(request, 'lifeInvaderGroup.html',
-    {'name':name,
+    {'user_id':user_id,
+    'name':name,
     'pic':pic,
     'posts':posts,
     'members':members,
-    'relation':relation})
+    'relation':relation[0]})
 
 
 def members_manager(request):
@@ -252,6 +252,22 @@ def members_manager(request):
     'r':r})
 
 
+def request_member(request, id):
+
+    group_id = request.session['group_id']
+    databasequeries.request_member(group_id, id)
+
+    return visit_group(request, group_id)
+
+
+
+def accept_member(request, id):
+
+    group_id = request.session['group_id']
+    databasequeries.accept_member(group_id, id)
+
+    return visit_group(request, group_id)
+
 @csrf_exempt
 def create_group(request):
 
@@ -266,7 +282,6 @@ def create_group(request):
 
     except Exception as e:
         print(e)
-
 
     return visit_group(request, group_id)
 

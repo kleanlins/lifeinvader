@@ -64,6 +64,9 @@
 								<div class="centerBox">
 									<div>
 										<p><span><img src="/static/{{pic}}" class="img-thumbnail thumb"></span>  {{name}} </p>
+										{% if image != '' %}
+										<img src='/static/{{image}}'>
+										{% endif %}
 										<h5>{{content}}</h5>
 									</div>
 								</div>
@@ -74,12 +77,12 @@
 			</div>
 		</div>
 
-		{% if relation != 'owner' and relation != 'member' %}
+		{% if relation != 'owner' and relation != 'member' and relation != 'admin' %}
 		<div class="col-lg-3">
 			<div class="box">
 				<h3>Wanna join?</h3>
 					<div class="people">
-						<a href="" class="btn btn-large submitButton" >Request to join</a>
+						<a href="{% url 'request_member' user_id %}" class="btn btn-large submitButton" >Request to join</a>
 					</div>
 			</div>
 		</div>

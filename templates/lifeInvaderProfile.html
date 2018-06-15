@@ -94,13 +94,43 @@
 							<div class="col">
 								<div class="centerBox">
 									<div>
-										<p><span><a href="{% url 'visit_profile' id %}" ><img src="/static/{{pic}}" class="img-thumbnail thumb">{{name}}:</span></a></p>
+										<!-- <p><span><a href="{% url 'visit_profile' id %}" ><img src="/static/{{pic}}" class="img-thumbnail thumb">{{name}}:</span></a></p>
+										{% if image != '' %}
+										<img src='/static/{{image}}'>
+										{% endif %}
 										<h5>{{ content }}</h5>
-										<hr>
-										
-									</div>
+										<hr> -->
+										<div>
+												<p>
+													<span>
+														<div class="row">
+															<div class="col-2">
+																<a href="{% url 'visit_profile' id %}" >
+																	{% if pic != '' %}
+																	<img src="/static/{{pic}}" class="img-thumbnail thumb">
+																	{% endif %}
+																</a>
+															</div>
+															<div class="col-10">
+																<span style="font-size: 30px; margin-left: 10px;">
+																	<a class="postUserName" href="{% url 'visit_profile' id %}" style="color: black; font-weight: bold; font-family: 'Open Sans', sans-serif;">
+																		{{ name }}
+																	</a>
+																</span>
+															</div>
+														</div>
+													</span>
+												</p>
+												<hr style="margin-top: 0;">
+												{% if image != '' %}
+												<img src='/static/{{image}}'>
+												{% endif %}
+											<h5>{{content}}</h5>
+										</div>
+
 								</div>
 							</div>
+						</div>
 							{% endfor %}
 						</div> <!-- end post 1 -->
 					</div>
@@ -109,7 +139,6 @@
 
 			<div class="col-lg-3">
 				{% if who == 'self' %}
-				{% if r == 'yes' %}
 				<div class="box">
 					<h3>Friendship requests</h3>
 						<div class="people">
@@ -120,8 +149,7 @@
 							{% endfor %}
 						</div>
 						<hr>
-				</div>\
-				{% endif %}
+				</div>
 				{% endif %}
 			</div>
 

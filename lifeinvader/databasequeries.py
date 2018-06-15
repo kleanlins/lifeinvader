@@ -113,7 +113,7 @@ def get_timeline_posts(id):
 
     for each in friends:
 
-        cmmd="select post.id, user.name, user.id, user.pic, post.content from user inner join post on "
+        cmmd="select post.id, user.name, user.id, user.pic, post.content, post.image from user inner join post on "
         cmmd2 = "user.id=post.id_location and post.id_location=post.id_owner where user.id={} and post.type_owner='U'".format(each[0])
 
         cursor.execute(cmmd + cmmd2)
@@ -254,8 +254,10 @@ def relation_group(user_id, group_id):
 
     cursor.execute(cmmd + cmmd2)
 
-    relation = [each[0] for each in cursor]
+    relation = [each for each in cursor]
 
+    if len(relation) < 1:
+        return 'nothing'
     return relation[0]
 
 
@@ -288,3 +290,20 @@ def create_group(id, name, pic):
     mariadb_connection.commit()
 
     return group_id
+
+
+def accept_member(group_id, member_id):
+
+    cmmd = "update user_group set relationship='member' where "
+    cmmd2 = "id_user={} and group_id={}".format(member_id, group_id)
+
+    cursor.execute(cmmd + cmmd2)
+    mariadb_connection.commit()
+
+
+def request_member(group_id, member_id):
+
+    cmmd = "insert into user_group value({},'requested',{})".format(member_id, group_id)
+
+    cursor.execute(cmmd)
+    mariadb_connection.commit()

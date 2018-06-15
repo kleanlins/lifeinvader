@@ -53,7 +53,7 @@
 						{% if rl == 'requested' %}
 						<div>
 							<h3><span class="img"><img src="/static/{{pic}}" class="img-thumbnail thumb"></span>{{name}}
-							<a href="" class="btn btn-large peopleButton">Accept</a>
+							<a href="{% url 'accept_member' id %}" class="btn btn-large peopleButton">Accept</a>
 							<a href="" class="btn btn-large peopleButton">Refuse</a>
 						</div>
 						<hr>

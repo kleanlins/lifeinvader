@@ -5,6 +5,7 @@
 		<link rel="stylesheet" type="text/css" href="/static/bootstrap.css">
 		<link rel="stylesheet" type="text/css" href="/static/lifeInvaderTimeline.css">
 		<link href="https://fonts.googleapis.com/css?family=Do+Hyeon" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 	</head>
 	<body>
@@ -66,11 +67,34 @@
 				<div class="row">
 					<div class="col"> <!-- Start posts -->
 						<div class="row"> <!-- start post 1 -->
-							{% for post_id, user, id, pic, content in posts %}
+							{% for post_id, user, id, pic, content, image in posts %}
 							<div class="col">
 								<div class="centerBox">
 									<div>
-										<p><span><a href="{% url 'visit_profile' id %}" >{% if pic != '' %}<img src="/static/{{pic}}" class="img-thumbnail thumb">{% endif %}</a></span>{{ user }}</p>
+											<p>
+												<span>
+													<div class="row">
+														<div class="col-2">
+															<a href="{% url 'visit_profile' id %}" >
+																{% if pic != '' %}
+																<img src="/static/{{pic}}" class="img-thumbnail thumb">
+																{% endif %}
+															</a>
+														</div>
+														<div class="col-10">
+															<span style="font-size: 30px; margin-left: 10px;">
+																<a class="postUserName" href="{% url 'visit_profile' id %}" style="color: black; font-weight: bold; font-family: 'Open Sans', sans-serif;">
+																	{{ user }}
+																</a>
+															</span>
+														</div>
+													</div>
+												</span>
+											</p>
+											<hr style="margin-top: 0;">
+											{% if image != '' %}
+											<img src='/static/{{image}}'>
+											{% endif %}
 										<h5>{{content}}</h5>
 									</div>
 								</div>
