@@ -48,11 +48,15 @@
 			<div class="col-lg-6">
 				<div class="row">
 					<div class="box">
+						{% if relation == 'owner' and relation == 'member' and relation == 'admin' %}
 						<form method='post'>
 							<span><input type="file" name="pic" accept="image/*" class="imgSender" ></span>
 							<textarea name='post_text' class="form-control" rows="3" placeholder="Post something ;)"></textarea>
 							<button class="btn btn-large submitButton" type="submit">Submit</button>
 						</form>
+						{% else %}
+							<h1>If you want to post something, ask to join the group :)</h1>
+						{% endif %}
 					</div>
 				</div>
 
@@ -82,7 +86,7 @@
 			<div class="box">
 				<h3>Wanna join?</h3>
 					<div class="people">
-						<a href="{% url 'request_member' user_id %}" class="btn btn-large submitButton" >Request to join</a>
+						<a href="{% url 'request_member' user_id %}" class="btn btn-large submitButton" >Request</a>
 					</div>
 			</div>
 		</div>

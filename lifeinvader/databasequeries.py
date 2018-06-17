@@ -39,7 +39,7 @@ def login_check(email, password):
 
 def get_posts(location, type):
 
-    cmmd = "select user.id, user.name, user.pic, post.content, post.image from post inner "
+    cmmd = "select post.id, user.id, user.name, user.pic, post.content, post.image from post inner "
     cmmd2 = "join user on user.id=post.id_owner where id_location='{}' and type_owner='{}' order by post.id desc".format(location, type)
     cursor.execute(cmmd + cmmd2)
 
@@ -48,7 +48,107 @@ def get_posts(location, type):
     for each in cursor:
         posts_list.append(each)
 
+    # print(posts_list)
     return posts_list
+
+
+def get_posts_wc(location, type):
+
+    posts_list = list()
+    comments_list = list()
+    comments_answers = list()
+
+    cmmd = "select post.id, user.id, user.name, user.pic, post.content, post.image from post inner "
+    cmmd2 = "join user on user.id=post.id_owner where id_location='{}' and type_owner='{}' order by post.id desc".format(location, type)
+    cursor.execute(cmmd + cmmd2)
+
+    for each in cursor:
+        posts_list.append(list(each))
+
+    for each in posts_list:
+        cmmd = "select user.id, user.name, user.pic, comment, comment.id from comment "
+        cmmd2 = "inner join user on comment.id_owner=user.id where "
+        cmmd3 = "comment.id_location={} and comment.type_location='P'".format(each[0])
+        cursor.execute(cmmd + cmmd2 + cmmd3)
+
+        if cursor:
+            for c in cursor:
+                comments_list.append(list(c))
+
+        if comments_list:
+
+            for ac in comments_list:
+                cmmd = "select user.id, user.name, user.pic, comment, comment.id from "
+                cmmd2 = "comment inner join user on comment.id_owner=user.id "
+                cmmd3 = "where id_location={} and comment.type_location='C'".format(ac[4])
+                cursor.execute(cmmd + cmmd2 + cmmd3)
+
+                if cursor:
+                    for ak in cursor:
+                        comments_answers.append(list(ak))
+
+                if comments_answers:
+                    ac.append(comments_answers)
+                else:
+                    ac.append('')
+                comments_answers = []
+
+            each.append(comments_list)
+        else:
+            each.append('')
+        comments_list = []
+
+    for each in posts_list:
+        print(each)
+
+    return posts_list
+
+
+def get_timeline_posts(id):
+    print("Getting friend posts from id={}".format(id))
+
+    friends = get_friends(id)
+    friends.append([id])
+    friends_posts = list()
+
+
+    for each in friends:
+
+        cmmd="select post.id, user.name, user.id, user.pic, post.content, post.image from user inner join post on "
+        cmmd2 = "user.id=post.id_location and post.id_location=post.id_owner where user.id={} and post.type_owner='U'".format(each[0])
+
+        cursor.execute(cmmd + cmmd2)
+
+        for each in cursor:
+            friends_posts.append(each)
+
+    friends_posts = sorted(friends_posts, key=lambda x:x[0], reverse=True)
+    return friends_posts;
+
+
+
+
+
+def post(id_owner, id_location, type_owner, text, pic):
+
+    # insert into post(id_owner, id_location, type_owner, content, image) value(,,'','','')"
+
+    cmmd = "insert into post(id_owner, id_location, type_owner, content, image) "
+    cmmd2 = "value({},{},'{}','{}','{}')".format(id_owner, id_location, type_owner, text, pic)
+
+    cursor.execute(cmmd + cmmd2)
+    mariadb_connection.commit()
+
+
+
+
+def delete_post(id):
+
+    cmmd = "delete from post where id={}".format(id)
+    print(cmmd)
+
+    cursor.execute(cmmd)
+    mariadb_connection.commit()
 
 
 
@@ -103,27 +203,6 @@ def get_groups(id, exc=None):
     # print(groups_data)
     return groups_data;
 
-def get_timeline_posts(id):
-    print("Getting friend posts from id={}".format(id))
-
-    friends = get_friends(id)
-    friends.append([id])
-    friends_posts = list()
-
-
-    for each in friends:
-
-        cmmd="select post.id, user.name, user.id, user.pic, post.content, post.image from user inner join post on "
-        cmmd2 = "user.id=post.id_location and post.id_location=post.id_owner where user.id={} and post.type_owner='U'".format(each[0])
-
-        cursor.execute(cmmd + cmmd2)
-
-        for each in cursor:
-            friends_posts.append(each)
-
-    friends_posts = sorted(friends_posts, key=lambda x:x[0], reverse=True)
-    return friends_posts;
-
 
 def get_all_users(id):
     cmmd = "select user.name, user.id, user.pic from user where id!={}".format(id)
@@ -150,15 +229,7 @@ def is_friend(id, id2):
 
     return status[0] if len(status) > 0 else 'not friends'
 
-def post(id_owner, id_location, type_owner, text, pic):
 
-    # insert into post(id_owner, id_location, type_owner, content, image) value(,,'','','')"
-
-    cmmd = "insert into post(id_owner, id_location, type_owner, content, image) "
-    cmmd2 = "value({},{},'{}','{}','{}')".format(id_owner, id_location, type_owner, text, pic)
-
-    cursor.execute(cmmd + cmmd2)
-    mariadb_connection.commit()
 
 
 def add_friend(user_id, friend_id):

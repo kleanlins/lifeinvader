@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from . import databasequeries
@@ -7,8 +7,10 @@ from . import databasequeries
 def home(request):
     return render(request, 'lifeInvaderHome.html')
 
+
 def login(request):
     return render(request, 'lifeInvaderLogin.html')
+
 
 def signup(request):
     return render(request, 'lifeInvaderSignup.html')
@@ -34,11 +36,12 @@ def success(request):
         {'name': name}
     )
 
+
 def profile(request):
     user_data = databasequeries.get_info_from_id(id)
 
 
-@csrf_exempt
+
 def user_login(request):
 
     email = request.POST.get('umail', '')
@@ -51,19 +54,19 @@ def user_login(request):
 
     if status:
         return render(request, 'lifeInvaderLogin.html',
-            {'status': status }
+            {'status': status}
         )
 
     print("Logged.")
     return show_profile(request)
 
 
-@csrf_exempt
 def show_profile(request):
     id = request.session['user_id']
     print("Logged user with id: ", id)
 
-    posts = databasequeries.get_posts(id, "U")
+    # posts = databasequeries.get_posts(id, "U")
+    posts = databasequeries.get_posts_wc(id, "U")
     name, age, email, pic = databasequeries.get_info_from_id(id)
     friends = databasequeries.get_friends(id)
     groups = databasequeries.get_groups(id)
@@ -72,34 +75,35 @@ def show_profile(request):
     who = 'self'
 
     return render(request, 'lifeInvaderProfile.html',
-    {'name':name,
-    'age':age,
-    'email':email,
-    'pic':pic,
-    'posts':posts,
-    'friends':friends,
-    'groups':groups,
-    'requests':friends_requests,
-    'who':who})
+        {'name': name,
+        'age': age,
+        'email': email,
+        'pic': pic,
+        'posts': posts,
+        'friends': friends,
+        'groups': groups,
+        'requests': friends_requests,
+        'who': who})
 
 @csrf_exempt
 def show_timeline(request):
     print("Timelining with id ", request.session['user_id'])
     id = request.session['user_id']
 
-    try:
-        post_text = request.POST.get('post_text', '')
-        post_img = request.POST.get('pic', '')
-        if(post_text != ''):
-            databasequeries.post(id, id, "U", post_text, post_img);
+    if request.method == 'POST':
+        try:
+            post_text = request.POST.get('post_text', '')
+            post_img = request.POST.get('pic', '')
+            if(post_text != ''):
+                databasequeries.post(id, id, "U", post_text, post_img);
 
-    except Exception as e:
-        print(e)
+        except Exception as e:
+            print(e)
 
     name, age, email, pic = databasequeries.get_info_from_id(id)
     friends = databasequeries.get_friends(id)
     groups = databasequeries.get_groups(id)
-    posts = databasequeries.get_timeline_posts(id)
+    posts = databasequeries.get_posts_wc(id, "U")
     all_users = databasequeries.get_all_users(id)
     all_groups = databasequeries.get_all_groups()
 
@@ -126,14 +130,15 @@ def visit_profile(request, id):
     else:
         request.session['someoneelse_id'] = id
 
-        try:
-            post_text = request.POST.get('post_text', '')
-            post_img = request.POST.get('pic', '')
-            if(post_text != ''):
-                databasequeries.post(user_id, id, "U", post_text, post_img);
+        if request.method == 'POST':
+            try:
+                post_text = request.POST.get('post_text', '')
+                post_img = request.POST.get('pic', '')
+                if(post_text != ''):
+                    databasequeries.post(user_id, id, "U", post_text, post_img);
 
-        except Exception as e:
-            print(e)
+            except Exception as e:
+                print(e)
 
 
         posts = databasequeries.get_posts(id, "U")
@@ -211,14 +216,15 @@ def visit_group(request, id):
     user_id = request.session['user_id']
     request.session['group_id'] = id
 
-    try:
-        post_text = request.POST.get('post_text', '')
-        post_img = request.POST.get('pic', '')
-        if(post_text != ''):
-            databasequeries.post(user_id, id, "G", post_text, post_img);
+    if request.method == 'POST':
+        try:
+            post_text = request.POST.get('post_text', '')
+            post_img = request.POST.get('pic', '')
+            if(post_text != ''):
+                databasequeries.post(user_id, id, "G", post_text, post_img);
 
-    except Exception as e:
-        print(e)
+        except Exception as e:
+            print(e)
 
     name, pic = databasequeries.get_group_info(id)
     posts = databasequeries.get_posts(id, "G")
@@ -286,6 +292,19 @@ def create_group(request):
     return visit_group(request, group_id)
 
 def logout(request):
-    request.session['user_id'] = 'none'
+    request.session['user_id'] = '0'
 
     return render(request, 'lifeInvaderLogin.html')
+
+
+def delete_post_pr(request, id):
+
+    print("deletando post {}".format(id))
+    user_id = request.session['user_id']
+
+    databasequeries.delete_post(id)
+
+    return show_profile(request)
+
+def answer_comment_tl(request, id):
+    pass

@@ -63,7 +63,7 @@
 						<p class="info">Endereço de email: {{email}}</p>
 						<hr>
 						{% if who == 'self' %}
-							<a href="./lifeInvaderProfileEditor.html"><button class="btn btn-large peopleButton">Edit informations</button></a>
+							<!-- <a href="./lifeInvaderProfileEditor.html"><button class="btn btn-large peopleButton">Edit informations</button></a> -->
 						{% else %}
 							{% if status == 'friends' %}
 								<a href="{% url 'remove_friend' %}"><button class="btn btn-large peopleButton">Remove friend</button></a>
@@ -79,27 +79,24 @@
 					</div>
 				</div>
 
+				{% if status == 'friends' or who == 'self' %}
 				<div class="box">
 					<form method='post'>
+						{% csrf_token %}
 						<span><input type="file" name="pic" accept="image/*" class="imgSender" ></span>
 						<textarea name='post_text' class="form-control" rows="3" placeholder="Post something ;)"></textarea>
 						<button class="btn btn-large submitButton" type="submit">Submit</button>
 					</form>
 				</div>
+				{% endif %}
 
 				<div class="row">
 					<div class="col"> <!-- Start posts -->
 						<div class="row"> <!-- start post 1 -->
-							{% for id, name, pic, content, image in posts %}
+							{% for p_id, id, name, pic, content, image, comments in posts %}
 							<div class="col">
 								<div class="centerBox">
 									<div>
-										<!-- <p><span><a href="{% url 'visit_profile' id %}" ><img src="/static/{{pic}}" class="img-thumbnail thumb">{{name}}:</span></a></p>
-										{% if image != '' %}
-										<img src='/static/{{image}}'>
-										{% endif %}
-										<h5>{{ content }}</h5>
-										<hr> -->
 										<div>
 												<p>
 													<span>
@@ -112,8 +109,8 @@
 																</a>
 															</div>
 															<div class="col-10">
-																<span style="font-size: 30px; margin-left: 10px;">
-																	<a class="postUserName" href="{% url 'visit_profile' id %}" style="color: black; font-weight: bold; font-family: 'Open Sans', sans-serif;">
+																<span style="font-size: 50px; margin-left: 10px;">
+																	<a href="{% url 'visit_profile' id %}" style="color: black; font-weight: bold; font-family: 'Open Sans', sans-serif;">
 																		{{ name }}
 																	</a>
 																</span>
@@ -125,10 +122,60 @@
 												{% if image != '' %}
 												<img src='/static/{{image}}'>
 												{% endif %}
-											<h5>{{content}}</h5>
+											<h2>{{content}}</h2>
+											<hr>
+											<a></a>
+											{% if comments %}
+											{% for comment in comments %}
+											<div class="comentario">
+												<div>
+													<h4><span><img src="/static/{{comment.2}}" class="img-thumbnail thumb"></span>{{comment.1}}: {{comment.3}}</h4>
+													<form>
+													{% csrf_token %}
+													<a class="btn" type="submit">Delete</a>
+													</form>
+													<hr>
+												</div>
+													<!-- answer of a comment -->
+													{% if comment.5 %}
+													{% for answer in comment.5 %}
+													<div class="comentario">
+														<div>
+															<h5><span><img src="/static/{{answer.2}}" class="img-thumbnail thumb"></span>
+															{{answer.1}}: {{answer.3}}</h5>
+															<form>
+															<a class="btn" type="submit">Delete</a>
+															</form>
+														</div>
+													</div>
+													{% endfor %}
+													{% endif %}
+													<!-- end of a answer -->
+												<div class="commentBox">
+													<form action="{% url 'answer_comment_tl' comment.4 %}">
+														{% csrf_token %}
+														<span><textarea class="form-control" placeholder="Answer that comment: "></textarea>
+														<a class="btn btn-large submitButton" type="submit">Send</a></span>
+													</form>
+												</div>
+											</div>
+											<hr>
+											{% endfor %}
+											{% endif %}
+											<div class="commentBox">
+												<form method='post'>
+													{% csrf_token %}
+													<textarea class="form-control" rows="3" placeholder="Write your comment here:"></textarea>
+													<a class="btn btn-large submitButton" type="submit">Send comment</a>
+												</form>
+											</div>
 										</div>
-
 								</div>
+								<hr>
+								<form action="{% url 'delete_post_pr' p_id %}">
+									<button class="btn btn-large submitButton" type="submit">Delete post</button>
+								</form>
+
 							</div>
 						</div>
 							{% endfor %}
@@ -137,8 +184,9 @@
 				</div>
 			</div>
 
+			{% if who == 'self' %}
+			{% if requests %}
 			<div class="col-lg-3">
-				{% if who == 'self' %}
 				<div class="box">
 					<h3>Friendship requests</h3>
 						<div class="people">
@@ -150,9 +198,9 @@
 						</div>
 						<hr>
 				</div>
-				{% endif %}
 			</div>
-
+			{% endif %}
+			{% endif %}
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script type="text/javascript" src="/static/bootstrap.js"></script>

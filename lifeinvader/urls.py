@@ -39,6 +39,8 @@ urlpatterns = [
     path('acced_friend/<int:id>/', views.acc_friend, name='acc_friend'),
     path('reffed_friend/<int:id>/', views.ref_friend, name='ref_friend'),
     path('login/', views.logout, name='logout'),
+    path('delete_post_pr/<int:id>/', views.delete_post_pr, name='delete_post_pr'),
+    path('answer_comment_tl/<int:id>/', views.answer_comment_tl, name='answer_comment_tl'),
 ]
 
 if settings.DEBUG:

@@ -56,10 +56,6 @@ p {
 	padding-left: 1%;
 }
 
-.postUserName:hover, .postUserName {
-	text-decoration: none;
-}
-
 .box, .centerBox, .leftBox {
 	background-color: #F4F4F9;
 	text-align: center;
@@ -123,3 +119,6 @@ p {
 		opacity: 1;
 	}
 }
+
+
+
